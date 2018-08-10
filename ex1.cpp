@@ -40,7 +40,7 @@ int main() {
 	}
 	
         imwrite("ex1.jpg",img);
-
+       	
 	imshow("Imagem 2", img);
 	  
 	waitKey(0);
