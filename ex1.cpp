@@ -28,14 +28,14 @@ int main() {
 	for(int i = 0; i<width; i++){
 		for(int j = 0; j<height; j++){
 			pixel = (int)img.at<uchar>(i,j);
-			
-			pixel = pixel + 100;
-			
-			if(pixel > 255) pixel = 255;
+
+			// se pixel+100 > 255 entao pixel = 255 senao pixel = pixel+100
+			pixel = ((pixel+100) > 255) ? 255 : pixel+100;
 			
 			cout << pixel << endl;		
 			
 			img.at<uchar>(i,j) = pixel;
+
 		}	
 	}
 	

@@ -33,6 +33,8 @@ int main() {
 			img.at<Vec3b>(i,j)[0] = ((img.at<Vec3b>(i,j)[0]+100) > 255) ? 255 : img.at<Vec3b>(i,j)[0]+100;
 			img.at<Vec3b>(i,j)[1] = ((img.at<Vec3b>(i,j)[1]+100) > 255) ? 255 : img.at<Vec3b>(i,j)[1]+100;
 			img.at<Vec3b>(i,j)[2] = ((img.at<Vec3b>(i,j)[2]+100) > 255) ? 255 : img.at<Vec3b>(i,j)[2]+100;
+
+			cout << "RGB= " <<"["<<(int)img.at<Vec3b>(i,j)[0]<<","<<(int)img.at<Vec3b>(i,j)[1]<<","<<(int)img.at<Vec3b>(i,j)[0]<<"]"<<endl;
 		}	
 	}
 
