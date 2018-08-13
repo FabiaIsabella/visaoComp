@@ -23,7 +23,7 @@ int main(){
 		Mat frame, frame2;
 		cap >> frame;
 	
-		if (!frame.data) break;
+		if (!frame.data) return -1;
 		
 		//escala de cinza
 		cvtColor(frame, frame, CV_BGR2GRAY);

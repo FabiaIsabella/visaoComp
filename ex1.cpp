@@ -13,7 +13,7 @@ int main() {
 	Mat img;
 	int height, width, pixel;
 
-	img = imread("lena.jpg" , CV_LOAD_IMAGE_GRAYSCALE);  
+	img = imread("london.jpg" , CV_LOAD_IMAGE_GRAYSCALE);  
 
 	if(!img.data) {
 		cout <<  "Não foi possivel abrir a imagem" << endl ;

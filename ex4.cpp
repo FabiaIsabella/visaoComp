@@ -34,7 +34,7 @@ int main() {
 			continue;
         	}
 		
-		imshow(fileName, img);
+		//imshow(fileName, img);
 
 		width = img.cols;
 		height = img.rows;
