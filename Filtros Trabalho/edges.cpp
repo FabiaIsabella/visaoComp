@@ -1,3 +1,5 @@
+//g++ edges.cpp -o edges `pkg-config --cflags --libs opencv`
+
 #include <iostream>
 #include <math.h>
 #include <algorithm>
@@ -144,87 +146,71 @@ Mat prewitt(Mat img){
 	return prewitt;
 }
 
-Mat mediana(Mat img){
+Mat laplaciano(Mat img){
 
- 	int pixel[9];
- 	
- 	for (int j = 1; j<img.rows-1; j++){
-    	for (int i = 1; i<img.cols-1; i++){
+	Mat imgLaplaciano = img.clone();
+
+	int mat[3][3] = {
+					{0, -1, 0},
+			        {-1, 4, -1},
+			        {0, -1, 0}
+  			       };
+
+    int gx, gy;
+    int pixel;
+
+    for(int i = 0; i< img.rows; i++){
+    	for(int j = 0; j< img.cols; j++){
+			pixel = 0;
     		
-    		pixel[0] = img.at<uchar>(j-1,i-1);
-    		pixel[1] = img.at<uchar>(j-1,i);
-    		pixel[2] = img.at<uchar>(j-1,i+1);
-    		pixel[3] = img.at<uchar>(j,i-1);
-    		pixel[4] = img.at<uchar>(j,i);
-    		pixel[5] = img.at<uchar>(j,i+1);
-    		pixel[6] = img.at<uchar>(j+1,i-1);
-    		pixel[7] = img.at<uchar>(j+1,i);
-    		pixel[8] = img.at<uchar>(j+1,i+1);
+    		for(int x =0; x<3; x++){
+    			for(int y=0; y<3; y++){
+    				int px = i + (x - 1);
+    				int py = j + (y - 1);
 
-    		sort(pixel, pixel+9);
+    				pixel = pixel + mat[x][y] * img.at<uchar>(px,py);
+    			}
+    		}
 
-    		img.at<uchar>(j,i) = pixel[4];
+ 			if (pixel> 255) pixel = 255;
+			if(pixel < 0) pixel = 0;
 
-    	}
-    }	
+			imgLaplaciano.at<uchar>(i,j) = pixel;
+		}
+	}
 
- 	return img;
-}
-
-Mat media(Mat img){
- 	
- 	int pixel;
-
- 	for (int j = 0; j<img.rows-1; j++){
-    	for (int i = 0; i<img.cols-1; i++){
-    		
-    		pixel = (img.at<uchar>(j-1,i-1) + img.at<uchar>(j-1,i) + img.at<uchar>(j-1,i+1) 
-    				+ img.at<uchar>(j,i-1) + img.at<uchar>(j,i) + img.at<uchar>(j,i+1) 
-    				+ img.at<uchar>(j+1,i-1) + img.at<uchar>(j+1,i) + img.at<uchar>(j+1,i+1))/9;
-
-    		img.at<uchar>(j,i) = pixel;
-
-    	}
-    }	
-
- 	return img;
+	return imgLaplaciano;
 }
 
 int main(){
 
 	Mat img = imread("lena.jpg" , CV_LOAD_IMAGE_GRAYSCALE);  
 
-	Mat input = img.clone();
+	Mat input1 = img.clone();
 	Mat input2 = img.clone();
 	Mat input3 = img.clone();
 	Mat input4 = img.clone();
-	Mat input5 = img.clone();
 
 	Mat imgRoberts;
 	Mat imgSobel;
 	Mat imgPrewitt; 
-	Mat imgMediana;
-	Mat imgMedia;
+	Mat imgLaplaciano;
 
 	if(!img.data) {
 		cout <<  "Não foi possivel abrir a imagem" << endl ;
 		return -1;
 	}
 	
-	imgRoberts = roberts(input);
+	imgRoberts = roberts(input1);
 	imgSobel = sobel(input2);
 	imgPrewitt = prewitt(input3);
-
-	imgMediana = mediana(input4);
-	imgMedia = media(input5);
+	imgLaplaciano = laplaciano(input4);
 
 	imshow("Imagem Original", img);
 	imshow("Roberts", imgRoberts);
 	imshow("Sobel", imgSobel);
 	imshow("Prewitt", imgPrewitt);
-	
-	imshow("Mediana", imgMediana);
-	imshow("Media", imgMedia);
+	imshow("Laplaciano", imgLaplaciano);
 
 	waitKey(0);
 

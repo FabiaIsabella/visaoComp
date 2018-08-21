@@ -1,3 +1,5 @@
+//g++ canny.cpp -o canny `pkg-config --cflags --libs opencv`
+
 #include <iostream>
 #include <math.h>
 
