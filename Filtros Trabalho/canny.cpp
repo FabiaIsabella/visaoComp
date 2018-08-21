@@ -41,6 +41,7 @@ Mat canny(Mat img, int highThreshold, int lowThreshold){
     int grad[height][width];
 	int theta[height][width];
 
+	//sobel
     for (int i = 0; i< img.rows; i++){
     	for (int j = 0; j< img.cols; j++){
 			gx = 0;
@@ -60,34 +61,37 @@ Mat canny(Mat img, int highThreshold, int lowThreshold){
  			if (grad[i][j]> 255) grad[i][j] = 255;
 			else if(grad[i][j] < 0) grad[i][j] = 0;
 
+			//angulo
 			theta[i][j] = (atan2(gy,gx)/PI) * 180.0;
 
 			sobel.at<uchar>(i,j) = grad[i][j];
 		}
 	}
 
+	//novo gradiente da imagem
 	int gradN[height][width];
 
 
+	//Non-maximum Supression
 	for(int i = 0; i < height; i++){
 		for(int j = 0; j < width; j++){	
 
-			// 0 degrees
+			// 0
 	        if ((theta[i][j] >= -337.5 || theta[i][j] < -22.5) || (theta[i][j] >= 157.5 && theta[i][j] < 202.5)){
 	          if(grad[i][j] >= grad[i][j + 1] && grad[i][j] >= grad[i][j - 1])
 	            gradN[i][j] = grad[i][j];
 	    	}
-	        // 45 degrees
+	        // 45
 	        else if ((theta[i][j] >= -22.5 && theta[i][j] < -67.5) || (theta[i][j] >= 202.5 && theta[i][j] < 247.5)){
 	          if(grad[i][j] >= grad[i - 1][j + 1] && grad[i][j] >= grad[i + 1][j - 1])
 	            gradN[i][j] = grad[i][j];
 	    	}
-	        // 90 degrees
+	        // 90
 	        else if ((theta[i][j] >= -67.5 && theta[i][j] < -112.5) || (theta[i][j] >= 247.5 && theta[i][j] < 292.5)){
 	          if(grad[i][j] >= grad[i - 1][j] && grad[i][j] >= grad[i + 1][j])
 	            gradN[i][j] = grad[i][j];
 	    	}
-	        // 135 degrees
+	        // 135
 	        else if ((theta[i][j] >= -112.5 && theta[i][j] < -157.5) || (theta[i][j] >= 292.5 && theta[i][j] < 337.5)){
 	          if(grad[i][j] >= grad[i - 1][j - 1] && grad[i][j] >= grad[i + 1][j + 1])
 	            gradN[i][j] = grad[i][j];
@@ -97,18 +101,22 @@ Mat canny(Mat img, int highThreshold, int lowThreshold){
 		}
 	}
 
+	//double thresholding
 	for(int i=0; i<height; i++){
 		for(int j=0; j<width; j++){
 			if(gradN[i][j] > highThreshold) 
 				imgFinal.at<uchar>(i,j) = 255;
 			else if(gradN[i][j] <= lowThreshold) 
 				imgFinal.at<uchar>(i,j) = 0;
+			
+			//pela média do maior e menor threshold
 			/*else{
 				int med = (highThreshold + lowThreshold)/2;
 				if(gradN[i][j] > med) imgFinal.at<uchar>(i,j) = 255;
 				else imgFinal.at<uchar>(i,j) = 0;
 			}*/
 
+			//pela vizinhança
 	    	else if(gradN[i-1][j-1] > highThreshold || gradN[i-1][j] > highThreshold || gradN[i-1][j+1] > highThreshold || 
 					gradN[i+1][j-1] > highThreshold || gradN[i+1][j] > highThreshold || gradN[i+1][j+1] > highThreshold || 
 					gradN[i][j-1] > highThreshold || gradN[i][j+1] > highThreshold) 

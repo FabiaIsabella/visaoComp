@@ -182,6 +182,41 @@ Mat laplaciano(Mat img){
 	return imgLaplaciano;
 }
 
+Mat laplaciano5(Mat img){
+
+	Mat imgGaussiano = img.clone();
+
+	int mat[5][5] = {
+					{-1, -1, -1, -1, -1},
+			        {-1, -1, -1, -1, -1},
+			        {-1, -1, 24, -1, -1},
+			        {-1, -1, -1, -1, -1},
+			        {-1, -1, -1, -1, -1}
+  			       };
+
+    int gx, gy;
+    int pixel;
+
+    for(int i = 0; i< img.rows; i++){
+    	for(int j = 0; j< img.cols; j++){
+			pixel = 0;
+    		
+    		for(int x =0; x<5; x++){
+    			for(int y=0; y<5; y++){
+    				int px = i + (x - 2);
+    				int py = j + (y - 2);
+
+    				pixel = pixel + mat[x][y] * img.at<uchar>(px,py);
+    			}
+    		}
+
+			imgGaussiano.at<uchar>(i,j) = pixel/273;
+		}
+	}
+
+	return imgGaussiano;
+}
+
 int main(){
 
 	Mat img = imread("lena.jpg" , CV_LOAD_IMAGE_GRAYSCALE);  
@@ -190,11 +225,13 @@ int main(){
 	Mat input2 = img.clone();
 	Mat input3 = img.clone();
 	Mat input4 = img.clone();
+	Mat input5 = img.clone();
 
 	Mat imgRoberts;
 	Mat imgSobel;
 	Mat imgPrewitt; 
 	Mat imgLaplaciano;
+	Mat imgLaplaciano5;
 
 	if(!img.data) {
 		cout <<  "Não foi possivel abrir a imagem" << endl ;
@@ -205,12 +242,14 @@ int main(){
 	imgSobel = sobel(input2);
 	imgPrewitt = prewitt(input3);
 	imgLaplaciano = laplaciano(input4);
+	imgLaplaciano5 = laplaciano5(input5);
 
 	imshow("Imagem Original", img);
 	imshow("Roberts", imgRoberts);
 	imshow("Sobel", imgSobel);
 	imshow("Prewitt", imgPrewitt);
 	imshow("Laplaciano", imgLaplaciano);
+	imshow("Laplaciano 5x5", imgLaplaciano5);
 
 	waitKey(0);
 
