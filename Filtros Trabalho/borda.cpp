@@ -66,44 +66,31 @@ Mat canny(Mat img, int highThreshold, int lowThreshold){
 
 	int gradN[height][width];
 
+
 	for(int i = 0; i < height; i++){
-		for(int j = 0; j < width; j++){
-			int tq = (cvRound(theta[i][j] * (5/PI) + 5)%5)%4;
+		for(int j = 0; j < width; j++){	
 
-			if(tq == 0){
- 				if(grad[i][j] >= grad[i][j+1] && grad[i][j] >= grad[i][j-1]) gradN[i][j] = grad[i][j];
- 				else gradN[i][j] = 0;
-			}
-			else if(tq == 1){
-				if(grad[i][j] >= grad[i-1][j+1] && grad[i][j] >= grad[i+1][j-1]) gradN[i][j] = grad[i][j];
-				else gradN[i][j] = 0;
-			}
-			else if(tq == 2){
-				if(grad[i][j] >= grad[i+1][j] && grad[i][j] >= grad[i-1][j]) gradN[i][j] = grad[i][j];
-				else gradN[i][j] = 0; 
-			}
-			else if(tq == 3){
-				if(grad[i][j] >= grad[i-1][j-1] && grad[i][j] >= grad[i+1][j+1]) gradN[i][j] = grad[i][j];
-				else gradN[i][j] = 0; 
-			}else gradN[i][j] = 0;
-
-		/*	if((theta[i][j]>=-22.5 && theta[i][j]<=22.5) || (theta[i][j]<-157.5 && theta[i][j]>=-180)){
- 				if(grad[i][j] >= grad[i][j+1] && grad[i][j] >= grad[i][j-1]) gradN[i][j] = grad[i][j];
- 				else gradN[i][j] = 0;
-			}
-			else if((theta[i][j]>=112.5 && theta[i][j]<=157.5) || (theta[i][j]<-22.5 && theta[i][j]>=-67.5)){
-				if(grad[i][j] >= grad[i-1][j+1] && grad[i][j] >= grad[i+1][j-1]) gradN[i][j] = grad[i][j];
-				else gradN[i][j] = 0;
-			}
-			else if((theta[i][j]>=67.5 && theta[i][j]<=112.5) ||  (theta[i][j]<-67.5 && theta[i][j]>=-112.5)){
-				if(grad[i][j] >= grad[i+1][j] && grad[i][j] >= grad[i-1][j]) gradN[i][j] = grad[i][j];
-				else gradN[i][j] = 0; 
-			}
-			else if((theta[i][j]>=22.5 && theta[i][j]<=67.5) || (theta[i][j]<-112.5 && theta[i][j]>=-157.5)){
-				if(grad[i][j] >= grad[i-1][j-1] && grad[i][j] >= grad[i+1][j+1]) gradN[i][j] = grad[i][j];
-				else gradN[i][j] = 0; 
-			}else gradN[i][j] = grad[i][j]; */
-
+			// 0 degrees
+	        if ((theta[i][j] >= -337.5 || theta[i][j] < -22.5) || (theta[i][j] >= 157.5 && theta[i][j] < 202.5)){
+	          if(grad[i][j] >= grad[i][j + 1] && grad[i][j] >= grad[i][j - 1])
+	            gradN[i][j] = grad[i][j];
+	    	}
+	        // 45 degrees
+	        else if ((theta[i][j] >= -22.5 && theta[i][j] < -67.5) || (theta[i][j] >= 202.5 && theta[i][j] < 247.5)){
+	          if(grad[i][j] >= grad[i - 1][j + 1] && grad[i][j] >= grad[i + 1][j - 1])
+	            gradN[i][j] = grad[i][j];
+	    	}
+	        // 90 degrees
+	        else if ((theta[i][j] >= -67.5 && theta[i][j] < -112.5) || (theta[i][j] >= 247.5 && theta[i][j] < 292.5)){
+	          if(grad[i][j] >= grad[i - 1][j] && grad[i][j] >= grad[i + 1][j])
+	            gradN[i][j] = grad[i][j];
+	    	}
+	        // 135 degrees
+	        else if ((theta[i][j] >= -112.5 && theta[i][j] < -157.5) || (theta[i][j] >= 292.5 && theta[i][j] < 337.5)){
+	          if(grad[i][j] >= grad[i - 1][j - 1] && grad[i][j] >= grad[i + 1][j + 1])
+	            gradN[i][j] = grad[i][j];
+	    	} else gradN[i][j] = 0;
+	       
 			supress.at<uchar>(i,j) = gradN[i][j];
 		}
 	}
@@ -112,8 +99,14 @@ Mat canny(Mat img, int highThreshold, int lowThreshold){
 		for(int j=0; j<width; j++){
 			if(gradN[i][j] > highThreshold) 
 				imgFinal.at<uchar>(i,j) = 255;
-			else if(gradN[i][j] < lowThreshold) 
+			else if(gradN[i][j] <= lowThreshold) 
 				imgFinal.at<uchar>(i,j) = 0;
+			/*else{
+				int med = (highThreshold + lowThreshold)/2;
+				if(gradN[i][j] > med) imgFinal.at<uchar>(i,j) = 255;
+				else imgFinal.at<uchar>(i,j) = 0;
+			}*/
+
 	    	else if(gradN[i-1][j-1] > highThreshold || gradN[i-1][j] > highThreshold || gradN[i-1][j+1] > highThreshold || 
 					gradN[i+1][j-1] > highThreshold || gradN[i+1][j] > highThreshold || gradN[i+1][j+1] > highThreshold || 
 					gradN[i][j-1] > highThreshold || gradN[i][j+1] > highThreshold) 
@@ -137,7 +130,7 @@ int main()
    	//imshow("GaussianBlur", img2);
 
 	Mat img3 = img.clone();
-	img3 = canny(img2, 90, 30);
+	img3 = canny(img2, 60, 30);
   
     imshow("Canny", img3);
 

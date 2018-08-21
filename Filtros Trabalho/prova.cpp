@@ -199,12 +199,14 @@ int main(){
 	Mat input3 = img.clone();
 	Mat input4 = img.clone();
 	Mat input5 = img.clone();
+	Mat input6 = img.clone();
 
 	Mat imgRoberts;
 	Mat imgSobel;
 	Mat imgPrewitt; 
 	Mat imgMediana;
 	Mat imgMedia;
+	Mat imgFreiChen;
 
 
 	if(!img.data) {

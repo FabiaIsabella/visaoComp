@@ -1,8 +1,9 @@
+
 import numpy as np
 from scipy.ndimage.filters import convolve, gaussian_filter
 from scipy.misc import imread, imshow
  
-def CannyEdgeDetector(im, blur = 1, highThreshold = 91, lowThreshold = 31):
+def CannyEdgeDetector(im, blur = 1, highThreshold = 91, lowThreshold = 45):
 	im = np.array(im, dtype=float) #Convert to float to prevent clipping values
  
 	#Gaussian blur to reduce noise
