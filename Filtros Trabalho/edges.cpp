@@ -148,13 +148,64 @@ Mat prewitt(Mat img){
 
 Mat laplaciano(Mat img){
 
+	Mat imgGaussiano = img.clone();
+
+
 	Mat imgLaplaciano = img.clone();
 
 	int mat[3][3] = {
-					{0, -1, 0},
-			        {-1, 4, -1},
-			        {0, -1, 0}
-  			       };
+					{-1, -1, -1},
+        			{-1, 8 -1},
+        			{-1, -1, -1}
+    		       };
+    int gx, gy;
+    int pixel;
+
+	//imgGaussiano = gaussiano(img);
+
+	GaussianBlur(img, imgGaussiano, Size(3, 3), 0, 0);
+
+    for(int i = 0; i< img.rows; i++){
+    	for(int j = 0; j< img.cols; j++){
+			pixel = 0;
+    		
+    		for(int x =0; x<3; x++){
+    			for(int y=0; y<3; y++){
+    				int px = i + (x - 1);
+    				int py = j + (y - 1);
+
+    				pixel = pixel + mat[x][y] * imgGaussiano.at<uchar>(px,py);
+    			}
+    		}
+    		
+    		if(pixel < 0) pixel = 0;
+    		if(pixel > 255) pixel = 255;
+
+			imgLaplaciano.at<uchar>(i,j) = pixel;
+		}
+	}
+
+
+	return imgLaplaciano;
+}
+
+Mat laplaciano5(Mat img){
+
+	Mat imgLaplaciano5 = img.clone();
+
+	/*int mat[5][5] = {
+					{-1, -1, -1, -1, -1},
+			        {-1, -1, -1, -1, -1},
+			        {-1, -1, 24, -1, -1},
+			        {-1, -1, -1, -1, -1},
+			        {-1, -1, -1, -1, -1}
+  			       };*/
+
+ 	int mat[3][3] = {
+					{-1, -1, -1},
+        			{-1, 8, -1},
+        			{-1, -1, -1}
+    		       };
 
     int gx, gy;
     int pixel;
@@ -172,54 +223,26 @@ Mat laplaciano(Mat img){
     			}
     		}
 
- 			if (pixel> 255) pixel = 255;
-			if(pixel < 0) pixel = 0;
-
-			imgLaplaciano.at<uchar>(i,j) = pixel;
-		}
-	}
-
-	return imgLaplaciano;
-}
-
-Mat laplaciano5(Mat img){
-
-	Mat imgGaussiano = img.clone();
-
-	int mat[5][5] = {
-					{-1, -1, -1, -1, -1},
-			        {-1, -1, -1, -1, -1},
-			        {-1, -1, 24, -1, -1},
-			        {-1, -1, -1, -1, -1},
-			        {-1, -1, -1, -1, -1}
-  			       };
-
-    int gx, gy;
-    int pixel;
-
-    for(int i = 0; i< img.rows; i++){
-    	for(int j = 0; j< img.cols; j++){
-			pixel = 0;
+    		//pixel = pixel/8;
     		
-    		for(int x =0; x<5; x++){
-    			for(int y=0; y<5; y++){
-    				int px = i + (x - 2);
-    				int py = j + (y - 2);
+    		if(pixel < 0) pixel = 0;
+    		if(pixel > 255) pixel = 255;
 
-    				pixel = pixel + mat[x][y] * img.at<uchar>(px,py);
-    			}
-    		}
-
-			imgGaussiano.at<uchar>(i,j) = pixel/273;
+			imgLaplaciano5.at<uchar>(i,j) = pixel;
 		}
 	}
 
-	return imgGaussiano;
+	return imgLaplaciano5;
 }
 
-int main(){
 
-	Mat img = imread("lena.jpg" , CV_LOAD_IMAGE_GRAYSCALE);  
+int main(int argc, char** argv){
+
+	String imageName;
+	if(argc > 1) imageName = argv[1];
+
+  	Mat img = imread(imageName, CV_LOAD_IMAGE_GRAYSCALE);
+	//Mat img = imread("lena.jpg", CV_LOAD_IMAGE_GRAYSCALE);  
 
 	Mat input1 = img.clone();
 	Mat input2 = img.clone();
@@ -241,15 +264,23 @@ int main(){
 	imgRoberts = roberts(input1);
 	imgSobel = sobel(input2);
 	imgPrewitt = prewitt(input3);
-	imgLaplaciano = laplaciano(input4);
+	imgLaplaciano = laplaciano(input4); //laplaciano da gaussiana
 	imgLaplaciano5 = laplaciano5(input5);
 
-	imshow("Imagem Original", img);
-	imshow("Roberts", imgRoberts);
-	imshow("Sobel", imgSobel);
-	imshow("Prewitt", imgPrewitt);
-	imshow("Laplaciano", imgLaplaciano);
-	imshow("Laplaciano 5x5", imgLaplaciano5);
+	
+	imwrite("output/cinza.jpg",img);
+	imwrite("output/roberts.jpg",imgRoberts);
+	imwrite("output/sobel.jpg",imgSobel);
+	imwrite("output/prewitt.jpg",imgPrewitt);
+	imwrite("output/laplacianoGaussiana.jpg",imgLaplaciano);
+	imwrite("output/laplaciano.jpg",imgLaplaciano5);
+
+	//imshow("Imagem Original", img);
+	//imshow("Roberts", imgRoberts);
+	//imshow("Sobel", imgSobel);
+	//imshow("Prewitt", imgPrewitt);
+	//imshow("Laplaciano da Gaussiana", imgLaplaciano);
+	//imshow("Laplaciano", imgLaplaciano5);
 
 	waitKey(0);
 

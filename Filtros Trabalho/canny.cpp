@@ -128,21 +128,28 @@ Mat canny(Mat img, int highThreshold, int lowThreshold){
 	return imgFinal;
  }
 
-int main()
-{
+int main(int argc, char** argv){
 
-    Mat img = imread("lena.jpg", 0); 
+	String imageName;
+    if(argc > 1) imageName = argv[1];
+
+    Mat img = imread(imageName, CV_LOAD_IMAGE_GRAYSCALE);
+
+    //Mat img = imread("lena.jpg", 0); 
    
    	Mat img2 = img.clone();
    
    	GaussianBlur(img, img2, Size(5, 5), 0, 0);
 
-   	//imshow("GaussianBlur", img2);
+//   	imshow("GaussianBlur", img2);
 
 	Mat img3 = img.clone();
 	img3 = canny(img2, 60, 30);
   
-    imshow("Canny", img3);
+//    imshow("Canny", img3);
+
+    //imwrite("output-canny/cannyOri-lena.jpg",img);
+    imwrite("output/canny.jpg",img3);
 
     waitKey(0);
     return 0;

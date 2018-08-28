@@ -16,8 +16,8 @@ Mat mediana(Mat img){
 
  	int pixel[9];
  	
- 	for (int j = 1; j<img.rows-1; j++){
-    	for (int i = 1; i<img.cols-1; i++){
+ 	for (int j = 1; j<img.rows; j++){
+    	for (int i = 1; i<img.cols; i++){
     		
     		pixel[0] = img.at<uchar>(j-1,i-1);
     		pixel[1] = img.at<uchar>(j-1,i);
@@ -43,8 +43,8 @@ Mat media(Mat img){
  	
  	int pixel;
 
- 	for (int j = 0; j<img.rows-1; j++){
-    	for (int i = 0; i<img.cols-1; i++){
+ 	for (int j = 0; j<img.rows; j++){
+    	for (int i = 0; i<img.cols; i++){
     		
     		pixel = (img.at<uchar>(j-1,i-1) + img.at<uchar>(j-1,i) + img.at<uchar>(j-1,i+1) 
     				+ img.at<uchar>(j,i-1) + img.at<uchar>(j,i) + img.at<uchar>(j,i+1) 
@@ -62,13 +62,20 @@ Mat gaussiano(Mat img){
 
 	Mat imgGaussiano = img.clone();
 
-	int mat[5][5] = {
+	/*int mat[5][5] = {
 					{1, 4, 7, 4, 1},
 			        {4, 16, 26, 16, 4},
 			        {7, 26, 41, 26, 7},
 			        {4, 16, 26, 16, 4},
 			        {1, 4, 7, 4, 1}
-  			       };
+  			       };*/
+
+
+	int mat[3][3] = {
+					{1, 2, 1},
+        			{2, 4, 2},
+        			{1, 2, 1}
+    		       };
 
     int gx, gy;
     int pixel;
@@ -77,25 +84,30 @@ Mat gaussiano(Mat img){
     	for(int j = 0; j< img.cols; j++){
 			pixel = 0;
     		
-    		for(int x =0; x<5; x++){
-    			for(int y=0; y<5; y++){
-    				int px = i + (x - 2);
-    				int py = j + (y - 2);
+    		for(int x =0; x<3; x++){
+    			for(int y=0; y<3; y++){
+    				int px = i + (x - 1);
+    				int py = j + (y - 1);
 
     				pixel = pixel + mat[x][y] * img.at<uchar>(px,py);
     			}
     		}
 
-			imgGaussiano.at<uchar>(i,j) = pixel/273;
+			imgGaussiano.at<uchar>(i,j) = pixel/16;
 		}
 	}
 
 	return imgGaussiano;
 }
 
-int main(){
+int main(int argc, char** argv){
 
-	Mat img = imread("lena.jpg" , CV_LOAD_IMAGE_GRAYSCALE);  
+	String imageName;
+    if(argc > 1) imageName = argv[1];
+
+    Mat img = imread(imageName, CV_LOAD_IMAGE_GRAYSCALE);
+    
+	//Mat img = imread("lenasp.jpg" , CV_LOAD_IMAGE_GRAYSCALE);  
 
 	Mat input1 = img.clone();
 	Mat input2 = img.clone();
@@ -114,10 +126,14 @@ int main(){
 	imgMediana = mediana(input2);
 	imgGaussiano = gaussiano(input3);
 
-	imshow("Imagem Original", img);
-	imshow("Media", imgMedia);
-	imshow("Mediana", imgMediana);
-	imshow("Gaussiano", imgGaussiano);
+	imwrite("output/media.jpg",imgMedia);
+	imwrite("output/mediana.jpg",imgMediana);
+	imwrite("output/gaussiano.jpg",imgGaussiano);
+
+	//imshow("Imagem Original", img);
+	//imshow("Media", imgMedia);
+	//imshow("Mediana", imgMediana);
+	//imshow("Gaussiano 3x3", imgGaussiano);
 
 	waitKey(0);
 
