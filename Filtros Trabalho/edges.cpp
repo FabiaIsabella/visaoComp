@@ -60,6 +60,9 @@ Mat roberts(Mat img){
 Mat sobel(Mat img){
 
 	Mat sobel = img.clone();
+	Mat sobelH = img.clone();
+	Mat sobelV = img.clone();
+
 	int vertical[3][3] = {
 					{1, 0, -1},
 			        {2, 0, -2},
@@ -73,7 +76,7 @@ Mat sobel(Mat img){
         			{1, 2, 1}
     		       };
     int gx, gy;
-    int grad;
+    int grad, gradH, gradV;
 
     for (int i = 0; i< img.rows; i++){
     	for (int j = 0; j< img.cols; j++){
@@ -94,9 +97,22 @@ Mat sobel(Mat img){
  			if (grad> 255) grad = 255;
 			else if(grad < 0) grad = 0;
 
+			gradH = gx;
+ 			if (gradH> 255) gradH = 255;
+			else if(gradH < 0) gradH = 0;
+
+			gradV = gy;
+ 			if (gradV> 255) gradV = 255;
+			else if(gradV < 0) gradV = 0;
+
 			sobel.at<uchar>(i,j) = grad;
+			sobelH.at<uchar>(i,j) = gradH;
+			sobelV.at<uchar>(i,j) = gradV;
 		}
 	}
+
+	imwrite("output/sobelH.jpg",sobelH);
+	imwrite("output/sobelV.jpg",sobelV);
 
 	return sobel;
 }

@@ -38,9 +38,9 @@ void histogramaGray(string const& nome, Mat img){
 int main(){
 	Mat img, img2;
 	
-        img=imread("lena.jpg", CV_LOAD_IMAGE_GRAYSCALE);
+    img=imread("lena.jpg", CV_LOAD_IMAGE_GRAYSCALE);
 
-        imshow("Imagem", img);	
+    //imshow("Imagem", img);	
 	histogramaGray("Histograma Imagem", img);
 
 	equalizeHist(img, img2);
